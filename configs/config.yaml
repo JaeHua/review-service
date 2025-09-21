@@ -13,8 +13,11 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
-
 snowflake:
   start_time: "2025-09-19 00:00:00"
   machine_id: 1
 
+registry:
+  consul:
+    address: 127.0.0.1:8500
+    scheme: http
