@@ -1,0 +1,48 @@
+ 1. 定义api文件
+ $ kratos proto add api/review/v1/review.proto
+ 2. 生成客户端和服务端代码
+ $ kratos proto client api/review/v1/review.proto
+ $ kratos proto server api/review/v1/review.proto -t internal/service
+ 3.填充业务逻辑
+ cmd/gen/generate.go 生成 代码
+ $ cd cmd/gen
+ $ go run .
+
+ internal目录下
+ server -> service -> data -> biz
+
+ 4. 更新ProviderSet 执行wire实现依赖注入
+ 默认的还是GreeterService相关的
+
+ \review-service\cmd\review-service>
+$ wire
+
+5. 配置文件修改
+$ make config
+
+
+6.参数校验
+$ go install github.com/envoyproxy/protoc-gen-validate@latest
+-pb 文件按要求编写字段校验规则
+-生成代码
+-注册参数校验中间件
+
+$ protoc --proto_path=. \
+             --proto_path=./third_party \
+             --go_out=paths=source_relative:. \
+             --validate_out=paths=source_relative,lang=go:. \
+             xxxx.proto
+7. 错误处理
+$ go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
+编写错误proto 文件
+生成错误代码
+￥ protoc --proto_path=. \
+           --proto_path=./third_party \
+           --go_out=paths=source_relative:. \
+           --go-errors_out=paths=source_relative:. \
+           $(API_PROTO_FILES)
+
+
+8. 服务注册与发现
+	"github.com/hashicorp/consul/api"
+	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
